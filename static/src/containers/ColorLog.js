@@ -46,7 +46,7 @@ class ColorLog extends Component {
               style={{
                 color: colors[datum.sensor_id - 1],
                 padding: '8px',
-                fontSize:'2em',
+                fontSize:'1.6em',
                 marginBottom: '10px'
               }}>
               <span style={{fontSize:'0.5em'}}>{moment(datum.date).format('HH:mm:ss')} </span>

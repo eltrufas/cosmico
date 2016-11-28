@@ -8,7 +8,7 @@ auth_req = requests.post('http://localhost:5000/api/get_token', json={
 	"password": "hunter1"
 })
 
-print auth_req.text
+print(auth_req.text)
 
 token = auth_req.json()['token']
 
@@ -16,13 +16,21 @@ headers = {'Authorization': token}
 
 def submit_data():
     sensor = random.randint(1, 4)
-    print sensor
+    print(sensor)
     r = requests.post('http://localhost:5000/api/submit_data', headers=headers, json=[{
         'sensor_id': sensor,
         'data': True,
         'date': time.time()
+    },
+    {
+        'sensor_id': sensor + 4,
+        'data': [
+            random.randint(0, 99),
+            random.randint(0, 99)
+         ],
+         'date': time.time()
     }])
-    print r.text
+    print(r.text)
     t = Timer(0.5, submit_data)
     t.start()
 

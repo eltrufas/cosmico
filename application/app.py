@@ -12,6 +12,11 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/<path:path>', methods=['GET'])
+def any_path(path):
+    return render_template('index.html')
+
+
 @app.route("/api/user", methods=["GET"])
 @requires_auth
 def get_user():
@@ -43,7 +48,6 @@ def create_user():
 @app.route("/api/get_token", methods=["POST"])
 def get_token():
     incoming = request.get_json()
-    print incoming
     user = User.get_user_with_email_and_password(incoming["email"], incoming["password"])
     if user:
         return jsonify(token=generate_token(user))
@@ -94,6 +98,7 @@ def submit_data():
 
     return jsonify(success=True)
 
+
 @app.route('/api/get_data', methods=['POST'])
 def get_data():
     data = request.get_json()
@@ -112,6 +117,7 @@ def get_data():
 
     return jsonify(map(DataPoint.serialize_point, points))
 
+
 @app.route('/api/get_frequencies', methods=['POST'])
 def get_frequencies():
     data = request.get_json()
@@ -127,6 +133,27 @@ def get_frequencies():
 
     for id in sensors:
         results[id] = db.session.query(DataPoint).filter(and_(DataPoint.sensor_id == id, DataPoint.date >= since)).count()
+
+    return jsonify(results)
+
+
+@app.route('/api/get_individual_data', methods=['POST'])
+def get_individual_data():
+    data = request.get_json()
+    since = datetime.fromtimestamp(float(request.args.get('since')))
+    sensors = data['sensors']
+
+
+    if since is None:
+        return 'xD', 400
+
+    results = {}
+
+    for id in sensors:
+        print(id)
+        points = db.session.query(DataPoint).filter(and_(DataPoint.sensor_id ==
+          id, DataPoint.date >= since))
+        results[id] = map(DataPoint.serialize_point, points)
 
     return jsonify(results)
 

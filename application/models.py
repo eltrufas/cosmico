@@ -23,14 +23,13 @@ class User(db.Model):
         else:
             return None
 
-SENSOR_TYPES = ['boolean']
 
 class Sensor(db.Model):
     __tablename__ = 'sensor'
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(255), unique=True)
-    sensor_type = db.Column(db.Enum('boolean', name='sensor_types'))
+    sensor_type = db.Column(db.Enum('boolean', 'scalar', 'vector', name='sensor_types'))
 
     readings = relationship("DataPoint", back_populates="sensor")
 
@@ -66,6 +65,10 @@ class DataPoint(db.Model):
 
         if self.type == 'boolean_data_point':
             obj['value'] = self.boolean_value
+        elif self.type == 'scalar_data_point':
+            obj['value'] = self.scalar_value
+        elif self.type == 'vector_data_point':
+            obj['value'] = map(lambda field: field.value, self.fields)
 
         return obj
 
@@ -74,6 +77,13 @@ class DataPoint(db.Model):
     def createDataPoint(sensor, data):
         if sensor.sensor_type == 'boolean':
             return BooleanDataPoint(sensor=sensor, boolean_value=data)
+        if sensor.sensor_type == 'scalar':
+            return ScalarDataPoint(sensor=sensor, scalar_data=data)
+        if sensor.sensor_type == 'vector':
+            point = VectorDataPoint(sensor=sensor)
+            for place, value in enumerate(data):
+                point.fields.append(VectorField(place=place, value=value))
+            return point
 
 
 class BooleanDataPoint(DataPoint):
@@ -85,3 +95,40 @@ class BooleanDataPoint(DataPoint):
     __mapper_args__ = {
         'polymorphic_identity':'boolean_data_point',
     }
+
+
+class ScalarDataPoint(DataPoint):
+    __tablename__ = 'scalar_data_point'
+
+    id = db.Column(db.Integer(), db.ForeignKey('data_point.id'),
+        primary_key=True)
+    scalar_value = db.Column(db.Float())
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'scalar_data_point'
+    }
+
+
+class VectorDataPoint(DataPoint):
+    __tablename__ = 'vector_data_point'
+
+    id = db.Column(db.Integer(), db.ForeignKey('data_point.id'), primary_key=True)
+    dimension = db.Column(db.Integer())
+    fields = relationship('VectorField', order_by='VectorField.place', back_populates='data_point')
+
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'vector_data_point',
+    }
+
+
+class VectorField(db.Model):
+    __tablename__ = 'vector_field'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    data_point_id = db.Column(db.Integer(), db.ForeignKey('data_point.id'))
+    data_point = relationship('VectorDataPoint', back_populates='fields')
+
+    place = db.Column(db.Integer())
+    value = db.Column(db.Float())
+
