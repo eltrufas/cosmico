@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Login from './Login';
 import Paper from 'material-ui/Paper';
 import moment from 'moment';
 
@@ -7,16 +6,24 @@ import moment from 'moment';
 class Clock extends Component {
   constructor() {
     super();
-    this.state = {hour: '', date: ''}
+    this.state = {hour: '', date: '', interval: null};
   }
 
   componentDidMount() {
-    setInterval(() => {
+    const interval = setInterval(() => {
       const date = moment().format("dddd, MMMM D YYYY");
       const hour = moment().format("hh:mm:ss a");
 
       this.setState({date, hour});
     }, 1000)
+
+    this.setState({ interval });
+  }
+
+  componentWillUnmount() {
+    if (this.state.interval) {
+      clearInterval(this.state.interval);
+    }
   }
 
   render() {

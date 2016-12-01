@@ -8,3 +8,4 @@ export const BAR_GRAPH = 'BAR_GRAPH';
 export const COLOR_LOG = 'COLOR_LOG';
 export const COUNTER = 'COUNTER';
 export const CLOCK = 'CLOCK';
+export const HEAT_MAP = 'HEAT_MAP';

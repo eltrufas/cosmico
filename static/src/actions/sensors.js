@@ -24,7 +24,6 @@ export const fetchNecessarySensors = (sensors) => (dispatch, getState) => {
 
     json.forEach(sensor => sensors[sensor.id] = sensor);
 
-    console.log("!!!!!!!!!!!!", sensors)
     dispatch({
       type: SENSOR_SUCCESS,
       payload: sensors

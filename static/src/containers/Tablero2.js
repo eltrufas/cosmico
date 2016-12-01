@@ -1,6 +1,6 @@
 import React from 'react';
 import VisualizationLayout from './VisualizationLayout';
-import { HORIZONTAL_SPLITTER, COUNTER, VERTICAL_SPLITTER, PIE_GRAPH, BAR_GRAPH, COLOR_LOG, CLOCK } from '../constants'
+import { HORIZONTAL_SPLITTER, COUNTER, VERTICAL_SPLITTER, PIE_GRAPH, BAR_GRAPH, CLOCK } from '../constants'
 
 
 const Home = () => (
@@ -33,7 +33,7 @@ const Home = () => (
       }
     }}
     root={0}
-    />
+  />
 );
 
 export default Home;

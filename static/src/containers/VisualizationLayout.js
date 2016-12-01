@@ -1,32 +1,33 @@
 import React, { Component } from 'react';
 import * as totalActions from '../actions/totals';
-import * as dataPointActions from '../actions/dataPoints';
+import * as overviewActions from '../actions/overview';
 import { connect } from 'react-redux'
 import Visualization from '../components/Visualization'
-import updater from '../SensorUpdate';
 
 class VisualizationLayout extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
+    const state = {
       interval: null
     };
 
     if (!props.components && !props.root) {
-      this.state.components = {};
-      this.root = null;
-      this.loaded = false;
+      state.components = {};
+      state.root = null;
+      state.loaded = false;
     }
+
+    this.state = state;
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const interval = setInterval(() => {
-      this.props.refreshTotals()
-      this.props.refreshDataPoints()
+      this.props.refreshTotals();
+      this.props.refreshOverview();
     }, 2000);
 
-    this.setState({ interval })
+    this.setState({ interval });
 
     if (!this.props.components) {
       // TODO: Load layout from backend
@@ -54,4 +55,4 @@ class VisualizationLayout extends Component {
   }
 }
 
-export default connect(null, {...totalActions, ...dataPointActions})(VisualizationLayout);
+export default connect(null, {...totalActions, ...overviewActions})(VisualizationLayout);

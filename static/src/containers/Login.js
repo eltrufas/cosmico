@@ -4,7 +4,6 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
 import * as actions from '../actions/account';
-import Subheader from 'material-ui/Subheader';
 
 class Login extends Component {
   constructor() {
@@ -51,14 +50,12 @@ class Login extends Component {
     if (!error) {
       const { loginUser } = this.props;
       loginUser(username, password)
-      console.log('submitted bois');
     }
   }
 
   render() {
     const { error } = this.props
     const { username, password, usernameError, passwordError } = this.state;
-    console.log(this.props)
     return (
       <Paper style={{ maxWidth: '400px', padding: '16px', margin: '20px auto'}}>
       <div style={{margin: '0 auto'}}>
