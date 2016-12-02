@@ -6,6 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
+import FlatButton from 'material-ui/FlatButton';
 import List from 'material-ui/List';
 
 import Subheader from 'material-ui/Subheader';
@@ -27,6 +28,7 @@ class App extends Component {
   }
 
   render() {
+    const { isLoggedIn, name } = this.props
     return (
       <div className="full-height">
         <Drawer
@@ -52,7 +54,13 @@ class App extends Component {
             <Link style={{ textDecoration: 'none' }} to="/admin"><MenuItem>Pagina de administrador</MenuItem></Link>
           </List>
         </Drawer>
-        <AppBar onLeftIconButtonTouchTap={this.handleMenuOpen}/>
+        <AppBar
+          onLeftIconButtonTouchTap={this.handleMenuOpen}
+          title="Visualización de particulas cosmicas"
+          iconElementRight={isLoggedIn ?
+            <FlatButton label={`Hola, ${name}`} containerElement={<Link to="/admin" />} /> :
+            <FlatButton label="Ingresar" linkButton={true} containerElement={<Link to="/admin" />} />}
+        />
         {this.props.children}
       </div>
     );
@@ -60,7 +68,7 @@ class App extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {isLoggedIn: !!state.account.token}
+  return {isLoggedIn: !!state.account.token, name: state.account.details.name}
 }
 
 export default connect(mapStateToProps)(App);

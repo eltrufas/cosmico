@@ -34,7 +34,7 @@ const details = createReducer({}, {
     return {};
   },
   [actions.LOGIN_REQUEST](state, action) {
-    return action.payload;
+    return { ...action.payload };
   }
 })
 
