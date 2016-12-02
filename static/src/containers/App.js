@@ -37,6 +37,8 @@ class App extends Component {
           <List>
             <Subheader>Navegacion</Subheader>
             <Link style={{ textDecoration: 'none' }} to="/"><MenuItem>Inicio</MenuItem></Link>
+            <Link style={{ textDecoration: 'none' }} to="/exportar"><MenuItem>Exportar datos</MenuItem></Link>
+
           </List>
           <Divider />
           <List>

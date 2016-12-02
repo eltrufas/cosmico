@@ -1,5 +1,5 @@
-from flask import request, render_template, jsonify, url_for, redirect, g
-from .models import User, BooleanDataPoint, Sensor, DataPoint
+from flask import request, render_template, jsonify, url_for, redirect, g, Response
+from models import User, BooleanDataPoint, Sensor, DataPoint
 from index import app, db, socketio
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import and_, desc
@@ -156,6 +156,29 @@ def get_individual_data():
         results[id] = map(DataPoint.serialize_point, points)
 
     return jsonify(results)
+
+
+@app.route('/api/download_data', methods=['get'])
+def download_data():
+    data = request.get_json()
+    since = datetime.fromtimestamp(float(request.args.get('since')))
+    until = datetime.fromtimestamp(float(request.args.get('until')))
+
+    query = db.session.query(DataPoint).filter(
+        and_(DataPoint.date >= since,
+        DataPoint.date <= until,
+        DataPoint.type == 'boolean_data_point'
+    ))
+    result = map(DataPoint.serialize_point, query)
+    csv = 'Placa,Fecha\n'
+    for point in result:
+        print point['type']
+        csv += str(point['sensor_id']) + ',' + str(point['date']) + '\n'
+    return Response(
+        csv,
+        mimetype="text/csv",
+        headers={"Content-disposition":
+                 "attachment; filename=datos.csv"})
 
 
 @app.route('/api/get_sensors', methods=['POST'])
